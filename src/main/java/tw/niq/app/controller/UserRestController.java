@@ -1,5 +1,9 @@
 package tw.niq.app.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -22,6 +26,8 @@ import tw.niq.app.model.response.UserRest;
 @RequestMapping("users")
 public class UserRestController {
 	
+	Map<String, UserRest> users = new HashMap<>();
+	
 	@GetMapping
 	public String getUsers(
 			@RequestParam(value = "page", defaultValue = "1") int page, 
@@ -34,24 +40,28 @@ public class UserRestController {
 			produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<UserRest> getUser(@PathVariable String userId) {
 		
-		UserRest returnValue = new UserRest();
-		returnValue.setUserId(userId);
-		returnValue.setFirstName("John");
-		returnValue.setLastName("Doe");
-		returnValue.setEmail("john.doe@example.com");
-		
-		return new ResponseEntity<>(returnValue, HttpStatus.OK);
+		if (users.containsKey(userId)) {
+			return new ResponseEntity<>(users.get(userId), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
 	}
 	
 	@PostMapping(
 			consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}, 
 			produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<UserRest> createUser(@Valid @RequestBody UserDetailsRequestModel userDetails) {
+	public ResponseEntity<UserRest> createUser(
+			@Valid @RequestBody UserDetailsRequestModel userDetails) {
 		
 		UserRest returnValue = new UserRest();
 		returnValue.setFirstName(userDetails.getFirstName());
 		returnValue.setLastName(userDetails.getLastName());
 		returnValue.setEmail(userDetails.getEmail());
+		
+		String userId = UUID.randomUUID().toString();
+		returnValue.setUserId(userId);
+		
+		users.put(userId, returnValue);
 		
 		return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
 	}
