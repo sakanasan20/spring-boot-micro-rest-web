@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import tw.niq.app.model.request.UpdateUserDetailsRequestModel;
 import tw.niq.app.model.request.UserDetailsRequestModel;
 import tw.niq.app.model.response.UserRest;
 
@@ -66,9 +67,25 @@ public class UserRestController {
 		return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
 	}
 	
-	@PutMapping
-	public String updateUser() {
-		return "update user was called";
+	@PutMapping(path = "/{userId}", 
+			consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}, 
+			produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<UserRest> updateUser(@PathVariable String userId, 
+			@Valid @RequestBody UpdateUserDetailsRequestModel userDetails) {
+		
+		if (users.containsKey(userId)) {
+			
+			UserRest storedUserDetails = users.get(userId);
+			
+			storedUserDetails.setFirstName(userDetails.getFirstName());
+			storedUserDetails.setLastName(userDetails.getLastName());
+			
+			users.put(userId, storedUserDetails);
+			
+			return new ResponseEntity<>(storedUserDetails, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
 	}
 	
 	@DeleteMapping
