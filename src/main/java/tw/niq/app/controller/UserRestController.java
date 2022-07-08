@@ -1,9 +1,5 @@
 package tw.niq.app.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -22,13 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 import tw.niq.app.model.request.UpdateUserDetailsRequestModel;
 import tw.niq.app.model.request.UserDetailsRequestModel;
 import tw.niq.app.model.response.UserRest;
+import tw.niq.app.service.UserService;
 
 @RestController
 @RequestMapping("users")
 public class UserRestController {
 	
-	Map<String, UserRest> users = new HashMap<>();
-	
+	private final UserService userService;
+		
+	public UserRestController(UserService userService) {
+		this.userService = userService;
+	}
+
 	@GetMapping
 	public String getUsers(
 			@RequestParam(value = "page", defaultValue = "1") int page, 
@@ -41,8 +42,10 @@ public class UserRestController {
 			produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<UserRest> getUser(@PathVariable String userId) {
 		
-		if (users.containsKey(userId)) {
-			return new ResponseEntity<>(users.get(userId), HttpStatus.OK);
+		UserRest returnValue = userService.getUser(userId);
+		
+		if (returnValue != null) {
+			return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
@@ -54,15 +57,7 @@ public class UserRestController {
 	public ResponseEntity<UserRest> createUser(
 			@Valid @RequestBody UserDetailsRequestModel userDetails) {
 		
-		UserRest returnValue = new UserRest();
-		returnValue.setFirstName(userDetails.getFirstName());
-		returnValue.setLastName(userDetails.getLastName());
-		returnValue.setEmail(userDetails.getEmail());
-		
-		String userId = UUID.randomUUID().toString();
-		returnValue.setUserId(userId);
-		
-		users.put(userId, returnValue);
+		UserRest returnValue = userService.createUser(userDetails);
 		
 		return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
 	}
@@ -73,15 +68,9 @@ public class UserRestController {
 	public ResponseEntity<UserRest> updateUser(@PathVariable String userId, 
 			@Valid @RequestBody UpdateUserDetailsRequestModel userDetails) {
 		
-		if (users.containsKey(userId)) {
-			
-			UserRest storedUserDetails = users.get(userId);
-			
-			storedUserDetails.setFirstName(userDetails.getFirstName());
-			storedUserDetails.setLastName(userDetails.getLastName());
-			
-			users.put(userId, storedUserDetails);
-			
+		UserRest storedUserDetails = userService.updateUser(userId, userDetails);
+		
+		if (storedUserDetails != null) {
 			return new ResponseEntity<>(storedUserDetails, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -91,7 +80,7 @@ public class UserRestController {
 	@DeleteMapping(path = "/{userId}")
 	public ResponseEntity<UserRest> deleteUser(@PathVariable String userId) {
 		
-		users.remove(userId);
+		userService.deleteUser(userId);
 		
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
