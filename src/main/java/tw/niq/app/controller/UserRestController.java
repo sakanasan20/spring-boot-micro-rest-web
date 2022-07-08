@@ -1,5 +1,6 @@
 package tw.niq.app.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,8 @@ public class UserRestController {
 		return "get users was called with page = " + page + " and limit = " + limit + " and srot = " + sort;
 	}
 
-	@GetMapping(path = "/{userId}")
+	@GetMapping(path = "/{userId}", 
+			produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 	public UserRest getUser(@PathVariable String userId) {
 		
 		UserRest returnValue = new UserRest();
