@@ -29,7 +29,7 @@ public class UserExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(value = {NullPointerException.class})
-	public ResponseEntity<Object> handleNullPointerException(Exception ex, WebRequest request) {
+	public ResponseEntity<Object> handleNullPointerException(NullPointerException ex, WebRequest request) {
 		
 		String message = ex.getLocalizedMessage();
 		
@@ -41,7 +41,7 @@ public class UserExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(value = {UserServiceException.class})
-	public ResponseEntity<Object> handleUserServiceException(Exception ex, WebRequest request) {
+	public ResponseEntity<Object> handleUserServiceException(UserServiceException ex, WebRequest request) {
 		
 		String message = ex.getLocalizedMessage();
 		
