@@ -1,22 +1,24 @@
 package tw.niq.app.model.request;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class UserDetailsRequestModel {
-	
-	private String userId;
-	
+
+	@NotNull(message = "First name cannot be null")
 	private String firstName;
 	
+	@NotNull(message = "Last name cannot be null")
 	private String lastName;
 	
+	@Email(message = "Email is invalid")
+	@NotNull(message = "Email cannot be null")
 	private String email;
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+	
+	@NotNull(message = "Password cannot be null")
+	@Size(min = 8, max = 16, message = "Password must be 8 ~ 16 characters")
+	private String password;
 
 	public String getFirstName() {
 		return firstName;
@@ -40,6 +42,14 @@ public class UserDetailsRequestModel {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }
