@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import tw.niq.app.model.UserRest;
+
 @RestController
 @RequestMapping("users")
 public class UserRestController {
@@ -21,8 +23,15 @@ public class UserRestController {
 	}
 
 	@GetMapping(path = "/{userId}")
-	public String getUser(@PathVariable String userId) {
-		return "get user was called with userId = " + userId;
+	public UserRest getUser(@PathVariable String userId) {
+		
+		UserRest returnValue = new UserRest();
+		returnValue.setUserId(userId);
+		returnValue.setFirstName("John");
+		returnValue.setLastName("Doe");
+		returnValue.setEmail("john.doe@example.com");
+		
+		return returnValue;
 	}
 	
 	@PostMapping
