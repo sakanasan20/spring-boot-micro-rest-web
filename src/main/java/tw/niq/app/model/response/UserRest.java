@@ -1,4 +1,4 @@
-package tw.niq.app.model;
+package tw.niq.app.model.response;
 
 public class UserRest {
 
